@@ -12,18 +12,19 @@ class PrintEditionItem {
 		this.state += this.state * 0.5;
 	}
 
-	set newState(state) {
-		if (state < 0) {
-			this.state = 0;
-		} else if (state > 100) {
-			this.state = 100;
+	set state(state) {
+		this._state = state;
+		if (this.state < 0) {
+			this._state = 0;
+		} else if (this.state > 100) {
+			this._state = 100;
 		} else {
-			this.state = state;
+			this._state = this.state;
 		}
 	}
 
-	get getState() {
-		return this.state;
+	get state() {
+		return this._state;
 	}
 }
 
@@ -37,8 +38,8 @@ console.log(`Дата выпуска издания: ${sherlock.releaseDate}`); 
 console.log(`Состояние по умолчанию: ${sherlock.state}`); //100
 sherlock.fix();
 console.log(`Состояние после фикса (х1.5): ${sherlock.state}`); //150
-sherlock.newState = -13;
-console.log(`Новое состояние: ${sherlock.getState}`); //0
+sherlock.newState = 110;
+console.log(`Новое состояние: ${sherlock.state}`); //0
 
 class Magazine extends PrintEditionItem {
 	constructor(name, releaseDate, pagesCount) {
@@ -105,18 +106,14 @@ class Library {
 		}
 	}
 	findBookBy(type, value) {
-		for (let i = 0; i < this.books.length; i++) {
-			if (this.books[i][type] === value) {
-				return this.books[i];
-			}
-		}
-		return null;
+		const findResult = this.books.find((item) => item[type] === value);
+		return findResult || null;
 	}
 	giveBookByName(bookName) {
-		let reqBook = this.findBookBy('name', bookName);
-		let indexOfBook = this.books.indexOf(reqBook);
-		if (indexOfBook === -1) return null;
-		return this.books.splice(indexOfBook, 1)[0];
+		const book = this.findBookBy("name", bookName);
+		if (!book) return null;
+		this.books = this.books.filter((item) => item.name !== bookName);
+		return book;
 	}
 }
 
